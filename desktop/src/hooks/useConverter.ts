@@ -1,8 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import type { Stage, VideoMeta, ConverterState } from '@yoink/shared';
 import { isValidYouTubeUrl, AUDIO_FORMAT_IDS } from '@yoink/shared';
-import os from 'os';
-import path from 'path';
 
 const DEFAULT_STATE: ConverterState = {
   url: '',
@@ -63,10 +61,7 @@ export function useConverter() {
     const { url, fmt, quality, trim, meta } = state;
     setState((s) => ({ ...s, stage: 'converting', progress: 0, error: null }));
 
-    const outputDir = path.join(
-      typeof process !== 'undefined' ? process.env.HOME ?? '' : '',
-      'Downloads',
-    ) || (typeof os !== 'undefined' ? os.homedir() + '/Downloads' : '');
+    const outputDir = '';
 
     // Subscribe to progress/done/error events
     unsubRef.current.push(

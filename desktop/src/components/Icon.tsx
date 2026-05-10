@@ -3,7 +3,8 @@ import React from 'react';
 type IconName =
   | 'link' | 'paste' | 'download' | 'play' | 'settings' | 'folder' | 'history'
   | 'check' | 'sparkle' | 'scissors' | 'arrowR' | 'x' | 'plus' | 'video'
-  | 'audio' | 'image' | 'clock' | 'eye' | 'minus' | 'maximize' | 'minimize' | 'close';
+  | 'audio' | 'image' | 'clock' | 'eye' | 'minus' | 'maximize' | 'minimize' | 'close'
+  | 'file' | 'youtube';
 
 const paths: Record<IconName, React.ReactNode> = {
   link:     <><path d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1"/><path d="M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1"/></>,
@@ -28,6 +29,8 @@ const paths: Record<IconName, React.ReactNode> = {
   maximize: <rect x="3" y="3" width="18" height="18" rx="2"/>,
   minimize: <path d="M5 12h14"/>,
   close:    <path d="m6 6 12 12M6 18 18 6"/>,
+  file:     <><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></>,
+  youtube:  <><rect x="2" y="5" width="20" height="14" rx="3.5"/><path d="M10 9.5 L16 12 L10 14.5 Z" fill="currentColor" stroke="none"/></>,
 };
 
 interface IconProps {

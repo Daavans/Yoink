@@ -1,5 +1,6 @@
 export type Stage = 'idle' | 'sniffing' | 'ready' | 'converting' | 'done';
-export type FormatKind = 'video' | 'audio' | 'image';
+export type FormatKind = 'video' | 'audio' | 'image' | 'document';
+export type InputFileType = 'video' | 'audio' | 'image' | 'pdf' | 'unknown';
 
 export interface Format {
   id: string;
@@ -51,4 +52,16 @@ export interface DownloadOpts {
 export interface StorageInfo {
   usedGB: number;
   totalGB: number;
+}
+
+export interface FileConvertOpts {
+  inputPath: string;
+  outputFormat: string;
+  quality: string;
+  durationSecs: number;
+}
+
+export interface FileInfo {
+  durationSecs: number;
+  sizeMB: number;
 }

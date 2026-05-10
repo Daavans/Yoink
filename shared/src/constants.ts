@@ -26,6 +26,30 @@ export const QUALITY_FORMAT_MAP: Record<string, string> = {
   '4K':    'bestvideo[height<=2160]+bestaudio/best',
 };
 
+// ── Image / PDF output formats ──────────────────────────────────────────────
+
+export const IMAGE_OUTPUT_FORMATS: Format[] = [
+  { id: 'jpg',  label: 'JPG',  kind: 'image',    sub: 'Compressed' },
+  { id: 'png',  label: 'PNG',  kind: 'image',    sub: 'Lossless' },
+  { id: 'webp', label: 'WEBP', kind: 'image',    sub: 'Web · small' },
+  { id: 'bmp',  label: 'BMP',  kind: 'image',    sub: 'Bitmap' },
+  { id: 'gif',  label: 'GIF',  kind: 'image',    sub: 'Animated' },
+  { id: 'pdf',  label: 'PDF',  kind: 'document', sub: 'Document' },
+];
+
+export const PDF_OUTPUT_FORMATS: Format[] = [
+  { id: 'png',  label: 'PNG',  kind: 'image',    sub: 'Page images' },
+  { id: 'jpg',  label: 'JPG',  kind: 'image',    sub: 'Page images' },
+  { id: 'webp', label: 'WEBP', kind: 'image',    sub: 'Page images' },
+  { id: 'pdf',  label: 'PDF',  kind: 'document', sub: 'Compress' },
+];
+
+export const QUALITIES_IMAGE = ['original', 'high', 'medium', 'low'] as const;
+
+export const VIDEO_INPUT_EXTS = new Set(['mp4','webm','mov','mkv','avi','wmv','flv','ts','m4v','3gp']);
+export const AUDIO_INPUT_EXTS = new Set(['mp3','wav','flac','m4a','aac','ogg','opus','wma']);
+export const IMAGE_INPUT_EXTS = new Set(['jpg','jpeg','png','webp','bmp','gif','tiff','tif','avif','heic','svg']);
+
 // MB per minute of video/audio at each quality
 export const SIZE_RATE: Record<string, number> = {
   '360p':     12,

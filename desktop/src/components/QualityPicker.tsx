@@ -6,6 +6,9 @@ interface QualityPickerProps {
   selected: string;
   format: string;
   onChange: (q: string) => void;
+  qualities?: readonly string[];
+  label?: string;
+  hints?: Record<string, string>;
 }
 
 const SIZE_HINTS: Record<string, string> = {
@@ -20,10 +23,11 @@ const SIZE_HINTS: Record<string, string> = {
   '320 kbps': '~8 MB/min',
 };
 
-export default function QualityPicker({ selected, format, onChange }: QualityPickerProps) {
+export default function QualityPicker({ selected, format, onChange, qualities, label: labelProp, hints }: QualityPickerProps) {
   const isAudio = AUDIO_FORMAT_IDS.has(format);
-  const opts = isAudio ? [...QUALITIES_AUDIO] : [...QUALITIES_VIDEO];
-  const label = isAudio ? 'BITRATE' : 'RESOLUTION';
+  const opts = qualities ? [...qualities] : isAudio ? [...QUALITIES_AUDIO] : [...QUALITIES_VIDEO];
+  const label = labelProp ?? (isAudio ? 'BITRATE' : 'RESOLUTION');
+  const sizeHints = hints ?? SIZE_HINTS;
 
   return (
     <div style={{ flex: 1, minWidth: 0 }}>
@@ -53,7 +57,7 @@ export default function QualityPicker({ selected, format, onChange }: QualityPic
                 <span style={{ fontSize: 13, fontWeight: 500 }}>{q}</span>
               </span>
               <span style={{ fontSize: 11, color: T.muted, fontFamily: T.mono }}>
-                {SIZE_HINTS[q] ?? ''}
+                {sizeHints[q] ?? ''}
               </span>
             </button>
           );

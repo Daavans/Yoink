@@ -2,6 +2,9 @@ import { app, BrowserWindow, ipcMain, shell, dialog, clipboard } from 'electron'
 import path from 'path';
 import { fetchMetadata } from './services/metadata';
 import { startDownload, cancelDownload } from './services/downloader';
+import fs from 'fs';
+import { probeFile, convertFile, cancelFileConvert, saveBuffer } from './services/fileConverter';
+import { getFfmpegPath } from './utils/ffPaths';
 import { getHistory, addHistory, clearHistory } from './services/history';
 import { getStorage } from './services/storage';
 
@@ -32,10 +35,10 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
-  // FFmpeg check
+  // FFmpeg check (use bundled binary so packaged app works without system FFmpeg)
   const { execSync } = require('child_process');
   try {
-    execSync('ffmpeg -version', { stdio: 'ignore' });
+    execSync(`"${getFfmpegPath()}" -version`, { stdio: 'ignore' });
   } catch {
     dialog.showErrorBox(
       'FFmpeg Not Found',
@@ -93,6 +96,44 @@ ipcMain.handle('file:reveal', (_e, filePath: string) => {
 ipcMain.handle('file:chooseDir', async () => {
   const result = await dialog.showOpenDialog(win!, {
     properties: ['openDirectory'],
+  });
+  return result.canceled ? null : result.filePaths[0];
+});
+
+// ─── File convert ──────────────────────────────────────────────────────────
+ipcMain.handle('convert:probe', (_e, filePath: string) => probeFile(filePath));
+ipcMain.handle('convert:start', async (_e, opts) => {
+  return convertFile(opts, (event, data) => {
+    win?.webContents.send(event, data);
+  });
+});
+ipcMain.handle('convert:cancel', () => cancelFileConvert());
+ipcMain.handle('file:readBytes', async (_e, filePath: string) => {
+  const buf = await fs.promises.readFile(filePath);
+  return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
+});
+ipcMain.handle('convert:saveBuffer', async (_e, data: ArrayBuffer, outputPath: string) => {
+  await saveBuffer(new Uint8Array(data), outputPath);
+});
+ipcMain.handle('file:pickInput', async () => {
+  const result = await dialog.showOpenDialog(win!, {
+    properties: ['openFile'],
+    filters: [
+      {
+        name: 'All Supported',
+        extensions: [
+          'mp4', 'webm', 'mov', 'mkv', 'avi', 'wmv', 'flv', 'ts', 'm4v',
+          'mp3', 'wav', 'flac', 'm4a', 'aac', 'ogg', 'opus',
+          'jpg', 'jpeg', 'png', 'webp', 'bmp', 'gif', 'tiff', 'tif', 'avif', 'heic',
+          'pdf',
+        ],
+      },
+      { name: 'Video',  extensions: ['mp4', 'webm', 'mov', 'mkv', 'avi', 'wmv', 'flv'] },
+      { name: 'Audio',  extensions: ['mp3', 'wav', 'flac', 'm4a', 'aac', 'ogg'] },
+      { name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'webp', 'bmp', 'gif', 'tiff', 'avif'] },
+      { name: 'PDF',    extensions: ['pdf'] },
+      { name: 'All Files', extensions: ['*'] },
+    ],
   });
   return result.canceled ? null : result.filePaths[0];
 });

@@ -16,20 +16,23 @@ interface ConvertBarProps {
   onCancel: () => void;
   onReveal: () => void;
   onReset: () => void;
+  isDownload?: boolean;
 }
 
 export default function ConvertBar({
   stage, fmt, quality, progress, durationSecs,
-  outputPath, onConvert, onCancel, onReveal, onReset,
+  outputPath, onConvert, onCancel, onReveal, onReset, isDownload,
 }: ConvertBarProps) {
   const format = FORMATS.find((f) => f.id === fmt) ?? FORMATS[0];
   const sizeMB = estimateSize(quality, durationSecs);
   const eta = progress > 0 && progress < 100 ? Math.max(1, Math.ceil((100 - progress) / 4)) : 0;
 
+  const verb = isDownload ? 'Download' : 'Convert';
+
   const title =
-    stage === 'converting' ? `Converting · ${Math.floor(progress)}%` :
-    stage === 'done'       ? 'Ready in Downloads' :
-    `Convert to ${format.label} · ${quality}`;
+    stage === 'converting' ? `${isDownload ? 'Downloading' : 'Converting'} · ${Math.floor(progress)}%` :
+    stage === 'done'       ? `${isDownload ? 'Downloaded' : 'Saved'} to Downloads` :
+    `${verb} to ${format.label} · ${quality}`;
 
   const sub =
     stage === 'converting' ? `${((progress / 100) * sizeMB).toFixed(1)} / ${sizeMB} MB · ETA ${eta}s` :
@@ -101,8 +104,8 @@ export default function ConvertBar({
             opacity: stage === 'ready' ? 1 : 0.4,
             cursor: stage === 'ready' ? 'pointer' : 'not-allowed',
           }}>
-            Convert
-            <Icon name="arrowR" size={14} stroke="#0e1014" strokeWidth={2.2} />
+            {verb}
+            <Icon name={isDownload ? 'download' : 'arrowR'} size={14} stroke="#0e1014" strokeWidth={2.2} />
           </button>
         )}
       </div>

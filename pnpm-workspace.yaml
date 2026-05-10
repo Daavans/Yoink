@@ -6,3 +6,4 @@ allowBuilds:
   electron: true
   esbuild: true
   youtube-dl-exec: true
+  ffmpeg-static: true

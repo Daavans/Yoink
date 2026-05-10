@@ -7,30 +7,35 @@ import Icon from './Icon';
 interface FormatPickerProps {
   selected: string;
   onChange: (id: string) => void;
+  formats?: Format[];
 }
 
 function FormatGlyph({ format, active }: { format: Format; active: boolean }) {
-  const iconName = format.kind === 'audio' ? 'audio' : format.kind === 'image' ? 'image' : 'video';
+  const iconName =
+    format.kind === 'audio'    ? 'audio' :
+    format.kind === 'document' ? 'file'  :
+    format.kind === 'image'    ? 'image' : 'video';
   return (
     <div style={{
       width: 22, height: 22, borderRadius: 6,
       background: active ? T.accentBg : 'rgba(255,255,255,0.05)',
-      color: active ? T.accent : T.muted,
       display: 'grid', placeItems: 'center', flexShrink: 0,
     }}>
-      <Icon name={iconName as 'audio' | 'image' | 'video'} size={12} stroke={active ? T.accent : T.muted} strokeWidth={1.7} />
+      <Icon name={iconName as 'audio' | 'file' | 'image' | 'video'} size={12} stroke={active ? T.accent : T.muted} strokeWidth={1.7} />
     </div>
   );
 }
 
-export default function FormatPicker({ selected, onChange }: FormatPickerProps) {
+export default function FormatPicker({ selected, onChange, formats: customFormats }: FormatPickerProps) {
+  const list = customFormats ?? FORMATS;
+  const cols = list.length <= 4 ? list.length : 4;
   return (
     <div style={{ flex: 1.4 }}>
       <div style={{ fontSize: 10.5, color: T.faint, letterSpacing: 1.5, fontWeight: 600, marginBottom: 10 }}>
         FORMAT
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
-        {FORMATS.map((f) => {
+      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: 8 }}>
+        {list.map((f) => {
           const active = f.id === selected;
           return (
             <button key={f.id} onClick={() => onChange(f.id)} style={{

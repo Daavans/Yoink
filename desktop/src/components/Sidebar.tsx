@@ -5,21 +5,22 @@ import Icon from './Icon';
 interface SidebarProps {
   activeView: string;
   onViewChange: (v: string) => void;
+  onPresetSelect: (format: string, quality: string) => void;
 }
 
 const NAV_ITEMS = [
-  { id: 'new',      icon: 'plus'    as const, label: 'New' },
-  { id: 'history',  icon: 'history' as const, label: 'History' },
-  { id: 'library',  icon: 'folder'  as const, label: 'Library' },
+  { id: 'new',     icon: 'youtube'  as const, label: 'YouTube' },
+  { id: 'history', icon: 'history'  as const, label: 'History' },
+  { id: 'convert', icon: 'scissors' as const, label: 'Convert file' },
 ];
 
 const PRESETS = [
-  { label: 'Music · 320',     color: T.accent },
-  { label: 'Pocket video · 720p', color: '#7ad6ff' },
-  { label: 'Archive · MOV',   color: '#ffae5b' },
+  { label: 'Music · 320',      color: T.accent,   format: 'mp3', quality: '320 kbps' },
+  { label: 'Pocket · 720p',    color: '#7ad6ff',  format: 'mp4', quality: '720p' },
+  { label: 'Archive · MOV',    color: '#ffae5b',  format: 'mov', quality: '1080p' },
 ];
 
-export default function Sidebar({ activeView, onViewChange }: SidebarProps) {
+export default function Sidebar({ activeView, onViewChange, onPresetSelect }: SidebarProps) {
   const [storage, setStorage] = useState({ usedGB: 0, totalGB: 1 });
 
   useEffect(() => {
@@ -61,11 +62,21 @@ export default function Sidebar({ activeView, onViewChange }: SidebarProps) {
       </div>
 
       {PRESETS.map((p) => (
-        <button key={p.label} style={{
-          display: 'flex', alignItems: 'center', gap: 10,
-          padding: '8px 10px', borderRadius: 8, fontSize: 12.5, color: T.muted,
-          background: 'transparent', border: 'none', textAlign: 'left', cursor: 'pointer', width: '100%',
-        }}>
+        <button
+          key={p.label}
+          onClick={() => {
+            onPresetSelect(p.format, p.quality);
+            onViewChange('new');
+          }}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 10,
+            padding: '8px 10px', borderRadius: 8, fontSize: 12.5, color: T.muted,
+            background: 'transparent', border: 'none', textAlign: 'left',
+            cursor: 'pointer', width: '100%', transition: 'background 0.1s',
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.04)')}
+          onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+        >
           <span style={{ width: 6, height: 6, borderRadius: 3, background: p.color, flexShrink: 0 }} />
           {p.label}
         </button>

@@ -38,6 +38,31 @@ contextBridge.exposeInMainWorld('yoink', {
   file: {
     reveal: (path: string) => ipcRenderer.invoke('file:reveal', path),
     chooseDir: () => ipcRenderer.invoke('file:chooseDir'),
+    pickInput: () => ipcRenderer.invoke('file:pickInput'),
+    readBytes: (filePath: string) => ipcRenderer.invoke('file:readBytes', filePath),
+  },
+
+  convert: {
+    probe: (filePath: string) => ipcRenderer.invoke('convert:probe', filePath),
+    start: (opts: unknown) => ipcRenderer.invoke('convert:start', opts),
+    cancel: () => ipcRenderer.invoke('convert:cancel'),
+    onProgress: (cb: (data: unknown) => void) => {
+      const listener = (_: unknown, data: unknown) => cb(data);
+      ipcRenderer.on('convert:progress', listener);
+      return () => ipcRenderer.removeListener('convert:progress', listener);
+    },
+    onDone: (cb: (data: unknown) => void) => {
+      const listener = (_: unknown, data: unknown) => cb(data);
+      ipcRenderer.on('convert:done', listener);
+      return () => ipcRenderer.removeListener('convert:done', listener);
+    },
+    onError: (cb: (msg: string) => void) => {
+      const listener = (_: unknown, msg: string) => cb(msg);
+      ipcRenderer.on('convert:error', listener);
+      return () => ipcRenderer.removeListener('convert:error', listener);
+    },
+    saveBuffer: (data: ArrayBuffer, outputPath: string) =>
+      ipcRenderer.invoke('convert:saveBuffer', data, outputPath),
   },
 
   window: {
