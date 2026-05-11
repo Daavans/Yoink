@@ -29,14 +29,124 @@ jobs:
       - name: Build and package
         run: cd desktop && pnpm run package:win
 
-      - name: Create GitHub Release
+      - name: Upload Windows installer
         uses: softprops/action-gh-release@v2
         with:
           name: Yoink! ${{ github.ref_name }}
           body: |
             ## Install
-            Download **Yoink! Setup.exe** below and run it.
+
+            **Windows:** Download and run `Yoink! Setup.exe`
+            **Android (full):** Download and install `Yoink-full.apk` (enable "Install unknown apps" in settings)
+            **Android (Play Store):** Coming soon
+
             No additional software required — FFmpeg and yt-dlp are bundled.
           files: desktop/release/*.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-android-full:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Prebuild Android
+        working-directory: mobile
+        run: npx expo prebuild --platform android --clean
+        env:
+          EXPO_PUBLIC_VARIANT: full
+
+      - name: Apply post-prebuild patches
+        working-directory: mobile
+        run: node scripts/post-prebuild-android.js
+        env:
+          ANDROID_SDK_ROOT: ${{ env.ANDROID_HOME }}
+
+      - name: Build APK
+        working-directory: mobile/android
+        run: ./gradlew assembleRelease
+        env:
+          EXPO_PUBLIC_VARIANT: full
+
+      - name: Rename APK
+        run: mv mobile/android/app/build/outputs/apk/release/app-release.apk mobile/android/app/build/outputs/apk/release/Yoink-full.apk
+
+      - name: Upload full APK
+        uses: softprops/action-gh-release@v2
+        with:
+          files: mobile/android/app/build/outputs/apk/release/Yoink-full.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-android-playstore:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Prebuild Android
+        working-directory: mobile
+        run: npx expo prebuild --platform android --clean
+        env:
+          EXPO_PUBLIC_VARIANT: playstore
+
+      - name: Apply post-prebuild patches
+        working-directory: mobile
+        run: node scripts/post-prebuild-android.js
+        env:
+          ANDROID_SDK_ROOT: ${{ env.ANDROID_HOME }}
+
+      - name: Build AAB
+        working-directory: mobile/android
+        run: ./gradlew bundleRelease
+        env:
+          EXPO_PUBLIC_VARIANT: playstore
+
+      - name: Rename AAB
+        run: mv mobile/android/app/build/outputs/bundle/release/app-release.aab mobile/android/app/build/outputs/bundle/release/Yoink-playstore.aab
+
+      - name: Upload Play Store AAB
+        uses: softprops/action-gh-release@v2
+        with:
+          files: mobile/android/app/build/outputs/bundle/release/Yoink-playstore.aab
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

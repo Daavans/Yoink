@@ -6,24 +6,36 @@
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",
-    "ios": "expo run:ios"
+    "ios": "expo run:ios",
+    "prebuild:android": "expo prebuild --platform android --clean && node scripts/post-prebuild-android.js"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.0",
+    "@react-native-async-storage/async-storage": "^2.0.0",
+    "@react-native/assets-registry": "0.74.81",
+    "@react-native/gradle-plugin": "0.74.81",
     "@yoink/shared": "workspace:*",
     "expo": "~51.0.0",
+    "expo-asset": "~10.0.0",
     "expo-clipboard": "~6.0.0",
+    "expo-constants": "~16.0.2",
+    "expo-document-picker": "~12.0.0",
     "expo-file-system": "~17.0.0",
     "expo-font": "~12.0.0",
+    "expo-linking": "~6.3.1",
+    "expo-media-library": "~16.0.0",
     "expo-router": "~3.5.0",
     "expo-sharing": "~12.0.0",
     "expo-status-bar": "~1.12.0",
+    "react-native-screens": "~3.31.1",
     "react": "18.2.0",
     "react-native": "0.74.0"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",
+    "@babel/runtime": "^7.24.0",
     "@types/react": "~18.2.0",
+    "babel-preset-expo": "~11.0.0",
     "typescript": "^5.3.0"
   }
 }

@@ -15,11 +15,18 @@
       "adaptiveIcon": {
         "backgroundColor": "#0e1014"
       },
-      "package": "com.yoink.app"
+      "package": "com.yoink.app",
+      "permissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.INTERNET"
+      ]
     },
     "plugins": [
       "expo-router",
-      "expo-font"
+      "expo-font",
+      ["expo-media-library", { "photosPermission": "Save converted files to your gallery." }],
+      "expo-document-picker"
     ],
     "experiments": {
       "typedRoutes": true
