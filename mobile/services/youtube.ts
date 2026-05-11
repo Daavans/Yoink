@@ -30,8 +30,11 @@ export async function fetchYouTubeInfo(videoUrl: string): Promise<{
   const videoId = extractVideoId(videoUrl);
   if (!videoId) throw new Error('Could not extract video ID from URL');
 
+  const ytKey = process.env.EXPO_PUBLIC_YT_INNERTUBE_KEY;
+  if (!ytKey) throw new Error('EXPO_PUBLIC_YT_INNERTUBE_KEY is not set');
+
   const res = await fetch(
-    'https://www.youtube.com/youtubei/v1/player?key=AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8',
+    `https://www.youtube.com/youtubei/v1/player?key=${ytKey}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

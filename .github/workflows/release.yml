@@ -75,6 +75,7 @@ jobs:
         run: npx expo prebuild --platform android --clean
         env:
           EXPO_PUBLIC_VARIANT: full
+          EXPO_PUBLIC_YT_INNERTUBE_KEY: ${{ secrets.YT_INNERTUBE_KEY }}
 
       - name: Apply post-prebuild patches
         working-directory: mobile
@@ -87,6 +88,7 @@ jobs:
         run: ./gradlew assembleRelease
         env:
           EXPO_PUBLIC_VARIANT: full
+          EXPO_PUBLIC_YT_INNERTUBE_KEY: ${{ secrets.YT_INNERTUBE_KEY }}
 
       - name: Rename APK
         run: mv mobile/android/app/build/outputs/apk/release/app-release.apk mobile/android/app/build/outputs/apk/release/Yoink-full.apk
@@ -128,6 +130,7 @@ jobs:
         run: npx expo prebuild --platform android --clean
         env:
           EXPO_PUBLIC_VARIANT: playstore
+          EXPO_PUBLIC_YT_INNERTUBE_KEY: ${{ secrets.YT_INNERTUBE_KEY }}
 
       - name: Apply post-prebuild patches
         working-directory: mobile
@@ -140,6 +143,7 @@ jobs:
         run: ./gradlew bundleRelease
         env:
           EXPO_PUBLIC_VARIANT: playstore
+          EXPO_PUBLIC_YT_INNERTUBE_KEY: ${{ secrets.YT_INNERTUBE_KEY }}
 
       - name: Rename AAB
         run: mv mobile/android/app/build/outputs/bundle/release/app-release.aab mobile/android/app/build/outputs/bundle/release/Yoink-playstore.aab
